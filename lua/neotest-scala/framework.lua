@@ -340,13 +340,6 @@ local function scalatest_framework()
         })
     end
 
-    ---Get test ID from the test line output.
-    ---@param output string
-    ---@return string
-    local function get_test_name(output, suffix)
-        return output:match("^- (.*)" .. suffix) or nil
-    end
-
     ---Get test namespace from the test line output.
     ---@param output string
     ---@return string|nil
@@ -366,15 +359,13 @@ local function scalatest_framework()
             if current_namespace and (not test_namespace or test_namespace ~= current_namespace) then
                 test_namespace = current_namespace
             end
-            if test_namespace and vim.startswith(line, "-") and vim.endswith(line, " *** FAILED ***") then
-                local test_name = get_test_name(line, " *** FAILED ***")
-                if test_name then
+            if test_namespace and vim.startswith(line, "- ") then
+                if vim.endswith(line, " *** FAILED ***") then
+                    local test_name = line:sub(3, -16)
                     local test_id = test_namespace .. "." .. vim.trim(test_name)
                     test_results[test_id] = TEST_FAILED
-                end
-            elseif test_namespace and vim.startswith(line, "-") then
-                local test_name = get_test_name(line, "")
-                if test_name then
+                else
+                    local test_name = line:sub(3)
                     local test_id = test_namespace .. "." .. vim.trim(test_name)
                     test_results[test_id] = TEST_PASSED
                 end
