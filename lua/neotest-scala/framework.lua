@@ -4,6 +4,7 @@ local M = {}
 
 TEST_PASSED = "passed" -- the test passed
 TEST_FAILED = "failed" -- the test failed
+TEST_SKIPPED = "skipped"
 
 ---@class neotest-scala.Framework
 ---@field build_command fun(runner: string, project: string, tree: neotest.Tree, name: string, extra_args: table|string): string[]
@@ -364,6 +365,18 @@ local function scalatest_framework()
                     local test_name = line:sub(3, -16)
                     local test_id = test_namespace .. "." .. vim.trim(test_name)
                     test_results[test_id] = TEST_FAILED
+                elseif vim.endswith(line, " !!! CANCELED !!!") then
+                    local test_name = line:sub(3, -18)
+                    local test_id = test_namespace .. "." .. vim.trim(test_name)
+                    test_results[test_id] = TEST_SKIPPED
+                elseif vim.endswith(line, " !!! IGNORED !!!") then
+                    local test_name = line:sub(3, -17)
+                    local test_id = test_namespace .. "." .. vim.trim(test_name)
+                    test_results[test_id] = TEST_SKIPPED
+                elseif vim.endswith(line, " (pending)") then
+                    local test_name = line:sub(3, -11)
+                    local test_id = test_namespace .. "." .. vim.trim(test_name)
+                    test_results[test_id] = TEST_SKIPPED
                 else
                     local test_name = line:sub(3)
                     local test_id = test_namespace .. "." .. vim.trim(test_name)
