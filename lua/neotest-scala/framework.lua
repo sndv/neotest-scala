@@ -345,7 +345,7 @@ local function scalatest_framework()
     ---@param output string
     ---@return string|nil
     local function get_test_namespace(output)
-        return output:match("^([%w%.]+):") or nil
+        return output:match("^([%w%.]+):$") or nil
     end
 
     -- Get test results from the test output.
