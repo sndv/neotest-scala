@@ -393,7 +393,7 @@ local function scalatest_framework()
     ---@return string|nil
     local function match_func(test_results, position_id)
         for test_id, result in pairs(test_results) do
-            if position_id:match(test_id) then
+            if position_id == test_id then
                 return result
             end
         end
